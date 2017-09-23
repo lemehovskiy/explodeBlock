@@ -54,27 +54,38 @@
     }
 
     .rect-inner {
-      display: flex;
-      flex-wrap: wrap;
+      //position: relative;
+      //display: flex;
+      //flex-wrap: wrap;
 
-      >div {
+      .block {
+        position: absolute;
         width: 50%;
+        height: 50%;
       }
 
       .block-1 {
-        //background: red;
+        left: 0;
+        top: 0;
+        transform: translate(-50px, -50px);
       }
 
       .block-2 {
-        //background: green;
+        left: 50%;
+        top: 0;
+        transform: translate(50px, -20px) scale(0.8);
       }
 
       .block-3 {
-        //background: blue;
+        left: 0;
+        top: 50%;
+        transform: translate(-30px, 20px) scale(0.86);
       }
 
       .block-4 {
-        //background: grey;
+        left: 50%;
+        top: 50%;
+        transform: translate(40px, 20px);
       }
     }
 

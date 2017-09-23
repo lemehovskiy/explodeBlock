@@ -22,7 +22,11 @@
 
     $.fn.explodeBlock = function (options) {
 
-        let general_settings = $.extend({}, options);
+        let general_settings = $.extend({
+            animate_in: 0.3,
+            animate_out: 0.7,
+            animate_duration: 1.5
+        }, options);
 
         let window_height,
             scrollTop,
@@ -33,7 +37,6 @@
             scrollTop = $(window).scrollTop();
 
             trigger = scrollTop + window_height;
-
         });
 
 
@@ -56,7 +59,6 @@
             function init() {
                 create_alt_blocks_layer();
                 update_alt_blocks_layer();
-                set_blocks_init_position();
                 create_exlode_timeline();
             }
 
@@ -69,9 +71,8 @@
                         'background-image': 'url(' + $this.data('exlode-block-alt-img') + ')',
                         'background-size': 'cover',
                         'background-position': 'center',
-                        'background-repeat': 'no-repeat'
-                        // 'top': -$(this).position().top + 'px',
-                        // 'left': -$(this).position().left + 'px',
+                        'background-repeat': 'no-repeat',
+                        'opacity': 0
                     }));
 
                     $(this).css({
@@ -83,24 +84,12 @@
             }
 
 
-            function set_blocks_init_position() {
-                TweenLite.set('.block-1', {x: -50, y: -50});
-                TweenLite.set('.block-2', {x: 50, y: -20, scale: 0.8});
-                TweenLite.set('.block-3', {x: -30, y: 20, scale: 0.86});
-                TweenLite.set('.block-4', {x: 40, y: 20});
-                TweenLite.set($element_blocks_alt_layer, {autoAlpha: 0})
-            }
-
-
             function create_exlode_timeline() {
 
                 explode_tl.pause();
 
                 explode_tl.add('move-in')
-                    .to('.block-1', 1, {x: 0, y: 0, scale: 1}, 'move-in')
-                    .to('.block-2', 1, {x: 0, y: 0, scale: 1}, 'move-in')
-                    .to('.block-3', 1, {x: 0, y: 0, scale: 1}, 'move-in')
-                    .to('.block-4', 1, {x: 0, y: 0, scale: 1}, 'move-in')
+                    .to($element_blocks, 1, {x: 0, y: 0, scale: 1}, 'move-in')
                     .to($element_blocks_alt_layer, 1, {autoAlpha: 1}, 'move-in')
 
             }
@@ -114,25 +103,31 @@
                 $element_blocks_alt_layer.css({
                     'width': element_width + 'px',
                     'height': element_height + 'px'
-                })
+                });
 
                 $element_blocks.each(function () {
-
                     $(this).find('div').css({
-                        'top': -$(this).position().top + 'px',
-                        'left': -$(this).position().left + 'px',
+                        'top': -parseInt($(this).css('top')) + 'px',
+                        'left': -parseInt($(this).css('left')) + 'px'
                     });
 
                 });
             }
 
+            $(window).resize(function () {
+                if (this.resizeTO) clearTimeout(this.resizeTO);
+                this.resizeTO = setTimeout(function () {
+                    $(this).trigger('resizeEnd');
+                }, 500);
+            });
 
-            $(window).on('scroll resize', function (e) {
 
-                if (e.type == 'resize') {
-                    update_alt_blocks_layer();
-                }
+            $(window).bind('resizeEnd', function () {
+                update_alt_blocks_layer();
+            });
 
+
+            $(window).on('scroll resize', function () {
 
                 animation_trigger_start = $this.offset().top;
                 animation_trigger_end = animation_trigger_start + window_height + element_height;
@@ -143,20 +138,24 @@
 
                     let progress = (trigger - animation_trigger_start) / animation_length;
 
-                    if (progress < 0.2) {
+                    // explode_tl.progress(progress);
 
-                        TweenLite.to(explode_tl, 1, {progress: 0});
+                    // TweenLite.to(explode_tl, general_settings.animate_duration, {progress: progress});
+
+                    if (progress < general_settings.animate_in) {
+
+                        TweenLite.to(explode_tl, general_settings.animate_duration, {progress: 0});
                     }
 
-                    else if (progress > 0.2 && progress < 0.8) {
+                    else if (progress > general_settings.animate_in && progress < general_settings.animate_out) {
 
-                        TweenLite.to(explode_tl, 1, {progress: 1});
+                        TweenLite.to(explode_tl, general_settings.animate_duration, {progress: 1});
 
                     }
 
-                    else if (progress > 0.8) {
+                    else if (progress > general_settings.animate_out) {
 
-                        TweenLite.to(explode_tl, 1, {progress: 0});
+                        TweenLite.to(explode_tl, general_settings.animate_duration, {progress: 0});
 
                     }
                 }
