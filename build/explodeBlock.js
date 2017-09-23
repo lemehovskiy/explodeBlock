@@ -25,7 +25,9 @@
         var general_settings = $.extend({
             animate_in: 0.3,
             animate_out: 0.7,
-            animate_duration: 1.5
+            animate_duration: 1.5,
+            animate_type: 'scroll_position'
+
         }, options);
 
         var window_height = void 0,
@@ -84,6 +86,8 @@
                 explode_tl.pause();
 
                 explode_tl.add('move-in').to($element_blocks, 1, { x: 0, y: 0, scale: 1 }, 'move-in').to($element_blocks_alt_layer, 1, { autoAlpha: 1 }, 'move-in');
+
+                explode_tl.seek('move-in');
             }
 
             function update_alt_blocks_layer() {
@@ -125,19 +129,33 @@
 
                     var progress = (trigger - animation_trigger_start) / animation_length;
 
-                    // explode_tl.progress(progress);
+                    if (general_settings.animate_type == 'scroll_position') {
 
-                    // TweenLite.to(explode_tl, general_settings.animate_duration, {progress: progress});
+                        var l_scroll_progress = void 0;
 
-                    if (progress < general_settings.animate_in) {
+                        if (progress < general_settings.animate_in) {
 
-                        TweenLite.to(explode_tl, general_settings.animate_duration, { progress: 0 });
-                    } else if (progress > general_settings.animate_in && progress < general_settings.animate_out) {
+                            l_scroll_progress = 1 / general_settings.animate_in * progress;
+                        } else if (progress > general_settings.animate_in && progress < general_settings.animate_out) {
 
-                        TweenLite.to(explode_tl, general_settings.animate_duration, { progress: 1 });
-                    } else if (progress > general_settings.animate_out) {
+                            l_scroll_progress = 1;
+                        } else {
+                            l_scroll_progress = 1 / general_settings.animate_out - 1 / general_settings.animate_out * progress;
+                        }
 
-                        TweenLite.to(explode_tl, general_settings.animate_duration, { progress: 0 });
+                        TweenLite.to(explode_tl, general_settings.animate_duration, { progress: l_scroll_progress });
+                    } else if (general_settings.animate_type == 'immediately') {
+
+                        if (progress < general_settings.animate_in) {
+
+                            TweenLite.to(explode_tl, general_settings.animate_duration, { progress: 0 });
+                        } else if (progress > general_settings.animate_in && progress < general_settings.animate_out) {
+
+                            TweenLite.to(explode_tl, general_settings.animate_duration, { progress: 1 });
+                        } else if (progress > general_settings.animate_out) {
+
+                            TweenLite.to(explode_tl, general_settings.animate_duration, { progress: 0 });
+                        }
                     }
                 }
             });
