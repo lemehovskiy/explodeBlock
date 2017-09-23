@@ -1,8 +1,8 @@
 {
-  "name": "animated_headline",
+  "name": "explode_block",
   "version": "1.0.2",
-  "description": "animated headline",
-  "main": "build/animatedHeadline.js",
+  "description": "explode block",
+  "main": "build/explodeBlock.js",
   "dependencies": {
     "jquery": ">=1.7",
     "gsap": "1.20.2"
@@ -30,13 +30,14 @@
   },
   "keywords": [
     "animation",
-    "headline",
+    "blocks",
     "gsap",
-    "jquery"
+    "jquery",
+    "explode"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/lemehovskiy/animatedHeadline"
+    "url": "https://github.com/lemehovskiy/explodeBlock"
   },
   "author": "lemehovskiy",
   "license": "ISC"
