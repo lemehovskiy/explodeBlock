@@ -1,6 +1,6 @@
 {
   "name": "explode_block",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "explode block",
   "main": "build/explodeBlock.js",
   "dependencies": {
