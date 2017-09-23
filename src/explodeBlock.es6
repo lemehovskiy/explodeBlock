@@ -38,7 +38,7 @@
             window_height = $(window).outerHeight();
             scrollTop = $(window).scrollTop();
 
-            trigger = scrollTop + window_height;
+            trigger = scrollTop;
         });
 
 
@@ -52,7 +52,9 @@
                 element_width,
                 $element_blocks = $this.find('.block'),
                 $element_blocks_alt_layer,
-                explode_tl = new TimelineMax();
+                explode_tl = new TimelineMax(),
+                timeline_scroll_progress;
+
 
 
             init();
@@ -134,55 +136,65 @@
             $(window).on('scroll resize', function () {
 
                 animation_trigger_start = $this.offset().top;
-                animation_trigger_end = animation_trigger_start + window_height + element_height;
+
+                if (animation_trigger_start < window_height) {
+                    animation_trigger_start = 0;
+                    animation_trigger_end = animation_trigger_start + element_height;
+                }
+
+                else {
+                    animation_trigger_end = animation_trigger_start + window_height + element_height;
+                    trigger = scrollTop + window_height;
+                }
+
 
                 animation_length = animation_trigger_end - animation_trigger_start;
 
+
                 if (trigger > animation_trigger_start && trigger < animation_trigger_end) {
 
+
                     let progress = (trigger - animation_trigger_start) / animation_length;
+
+                    console.log(progress);
 
 
                     if (general_settings.animate_type == 'scroll_position') {
 
-                        let l_scroll_progress;
-
                         if (progress < general_settings.animate_in) {
 
-                            l_scroll_progress = 1 / general_settings.animate_in * progress
+                            timeline_scroll_progress = 1 / general_settings.animate_in * progress
                         }
 
                         else if (progress > general_settings.animate_in && progress < general_settings.animate_out) {
 
-                            l_scroll_progress = 1;
+                            timeline_scroll_progress = 1;
                         }
 
                         else {
-                            l_scroll_progress = 1 / general_settings.animate_out - 1 / general_settings.animate_out * progress
+                            timeline_scroll_progress = 1 / general_settings.animate_out - 1 / general_settings.animate_out * progress
                         }
 
-                        TweenLite.to(explode_tl, general_settings.animate_duration, {progress: l_scroll_progress});
+                        TweenLite.to(explode_tl, general_settings.animate_duration, {progress: timeline_scroll_progress});
                     }
 
 
                     else if (general_settings.animate_type == 'immediately') {
 
                         if (progress < general_settings.animate_in) {
-
-                            TweenLite.to(explode_tl, general_settings.animate_duration, {progress: 0});
+                            timeline_scroll_progress = 0;
                         }
 
                         else if (progress > general_settings.animate_in && progress < general_settings.animate_out) {
-
-                            TweenLite.to(explode_tl, general_settings.animate_duration, {progress: 1});
-
+                            timeline_scroll_progress = 1;
                         }
 
                         else if (progress > general_settings.animate_out) {
 
-                            TweenLite.to(explode_tl, general_settings.animate_duration, {progress: 0});
-
+                            timeline_scroll_progress = 0;
                         }
+
+                        TweenLite.to(explode_tl, general_settings.animate_duration, {progress: timeline_scroll_progress});
                     }
 
                 }
